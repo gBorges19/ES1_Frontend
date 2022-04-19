@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import * as H from "./styles";
-import Add from "../../assets/Add.png";
+//import Add from "../../assets/Add.png";
 import Logo from '../../assets/L.png';
 import api from "../../api";
 
@@ -178,7 +178,7 @@ function HomeAdm() {
         }
 
         await cadastraEmail()
-        await cadastraTelefone()
+        //await cadastraTelefone()
 
         const marcaResponse = await api.post('marca',{
 
@@ -293,9 +293,6 @@ function HomeAdm() {
         getServicos();
     },[])
 
-
-
-
     return(
 
 
@@ -314,8 +311,6 @@ function HomeAdm() {
                 <H.RowContainer>
                     <H.TextInput>Data OS:</H.TextInput>
                     <H.InputMaior type="date" value={today}/>
-                    <H.Checkbox type="checkbox"/>
-                    <H.TextInput>Já Aprovada?</H.TextInput>
                 </H.RowContainer>
 
                 <H.CustomerContainer>
@@ -385,22 +380,32 @@ function HomeAdm() {
                         <H.TextInputServices>Nome do Produto</H.TextInputServices>
                         <H.TextInputServices>Valor do Produto</H.TextInputServices>
                         <H.TextInputServices>Quantidade</H.TextInputServices>
+                        <H.TextInputServices>Total</H.TextInputServices>
                     </H.RowContainer>
                     { produtos.map( (item) => {
+
+                        function getNum(val) {
+                            if (isNaN(val)) {
+                                return 0;
+                            }
+                            return val;
+                        }
+
                         return(
                             <H.RowContainer key={item}>
                                 <H.InputMedio value={item.codProduto}/>
                                 <H.InputMaior value={item.nomeProduto}/>
-                                <H.InputMedio defaultValue={0} value={item.valorItem * item.quantidade}/>
+                                <H.InputMedio defaultValue={0} value={item.valorItem}/>
                                 <H.InputMenor type='number' defaultValue={0} onChange = {(event) => {
                                     const produtosAlterados = produtos.map((prod)=>{
                                         if(prod.codProduto===item.codProduto){
-                                            return {...prod, quantidade: event.target.value};
-                                        }else{
+                                                return {...prod, quantidade: event.target.value};
+                                            }else{
                                             return prod;
                                         }
                                     });
                                     setProdutos(produtosAlterados)}}/>
+                                <H.Total>{getNum(item.valorItem * item.quantidade)} R$</H.Total>
                             </H.RowContainer>
                         )
                     })

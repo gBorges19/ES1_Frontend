@@ -156,7 +156,7 @@ export const InputMenor = styled.input`
     border-top: none;
     border-left: none;
     border-right: none;
-    margin: 5px;
+    margin: 5px 5px 5px 15px;
     width: 50px;
     background: none;
     color: #ffffff;
@@ -169,7 +169,7 @@ export const InputMedio = styled.input`
     border-top: none;
     border-left: none;
     border-right: none;
-    margin: 5px;
+  margin: 5px 5px 5px 15px;
     width: 105px;
     background: none;
     color: #ffffff;
@@ -182,7 +182,7 @@ export const InputMaior = styled.input`
     border-top: none;
     border-left: none;
     border-right: none;
-    margin: 5px;
+    margin: 5px 5px 5px 15px;
     width: 220px;
     background: none;
     color: #ffffff;
@@ -212,7 +212,7 @@ export const ServicesContainer = styled.div`
 
 export const TextInputServices = styled.span`
 
-    margin: 25px 55px 25px 10px;
+    margin: 25px 55px 35px 5px;
     font-size: 15px;
     color: #ffffff;
     font-family: 'Roboto', sans-serif;
@@ -292,5 +292,14 @@ export const ColumnContainer = styled.div`
     display: flex;
     flex-direction: column;
 
+
+`
+
+export const Total = styled.p`
+
+  margin-left: 50px;
+  font-size: 15px;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
 
 `

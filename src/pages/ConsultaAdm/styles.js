@@ -4,10 +4,9 @@ export const GlobalContainer = styled.div`
 
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
+    height: 100vh;
     background: #1A1A1A;
-    justify-content: center;
 
 `
 
@@ -19,6 +18,16 @@ export const Header = styled.header`
     background: transparent;
     align-items: center;
     justify-content: center;
+
+
+`
+
+export const ColumnContainer = styled.div`
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
 
 `
@@ -106,35 +115,41 @@ export const Title = styled.h1`
 
 export const OrdemServiçoHeader = styled.div`
 
-    display: flex;
-    flex-direction: column;
-    background: rgba(33, 37, 41, 0.93);
-    border-radius: 20px 20px 0px 0px;
-    width: 80%;
-    padding: 20px;
-    border: 5px solid black;
-    border-top: none;
-    border-left: none;
-    border-bottom: none;
-    justify-content: space-between;
-    margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(33, 37, 41, 0.93);
+  border-radius: 20px 20px 0px 0px;
+  width: 80%;
+  padding: 20px;
+  border: 5px none black;
+  border-right-style: solid;
+  justify-content: space-between;
+  margin-top: 30px;
 
 
 `
 
-export const OrdemServiço = styled.div`
+export const Wave = styled.svg`
 
-    display: flex;
-    flex-direction: column;
-    background: rgba(33, 37, 41, 0.50);
-    width: 80%;
-    height: 80%;
-    padding: 20px;
-    border-radius: 0px 0px 20px 20px;
-    border: 5px solid black;
-    border-top: none;
-    border-left: none;
-    margin-bottom: 50px;
+    position: absolute;
+    bottom: 0;
+
+
+`
+
+export const OrdemServico = styled.div`
+
+  display: flex;
+  flex-direction: column;
+  background: rgba(33, 37, 41, 0.50);
+  width: 80%;
+  height: 80%;
+  padding: 20px;
+  border-radius: 0 0 20px 20px;
+  border: 5px solid black;
+  border-top: none;
+  border-left: none;
+  margin-bottom: 50px;
 
 `
 
