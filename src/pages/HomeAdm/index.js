@@ -1,4 +1,4 @@
-import React, {useState, useEffect}  from 'react';
+import React, {useEffect, useState} from 'react';
 import * as H from "./styles";
 import Add from "../../assets/Add.png";
 import Logo from '../../assets/L.png';
@@ -9,13 +9,12 @@ function HomeAdm() {
 
     let today = new Date().toISOString().slice(0, 10)
 
+    /*
     const[rua, setRua] = useState('');
     const[bairro, setBairro] = useState('');
     const[cidade, setCidade] = useState('');
     const[estado, setEstado] = useState('')
-
-    const[serviceCount, setServiceCount] = useState([0])
-    const[produtCount, setProdutCount] = useState([0])
+     */
 
     const[nomeCliente, setNomeCliente] = useState('')
     const[cpfCliente, setCpfCliente] = useState('')
@@ -26,8 +25,13 @@ function HomeAdm() {
     const[cidadeCliente, setCidadeCliente] = useState('')
     const[ufCliente, setUfCliente] = useState('')
     const[complementoCliente, setComplementoCliente] = useState('')
-    const[fonesCliente, setFonesCliente] = useState([])
-    const[emailsCliente, setEmailsCliente] = useState([])
+
+    const[foneCliente, setFoneCliente] = useState('')
+    const[foneClienteDois, setFoneClienteDois] = useState('')
+    const[foneClienteTres, setFoneClienteTres] = useState('')
+
+    const[emailCliente, setEmailCliente] = useState('')
+    const[emailClienteDois, setEmailClienteDois] = useState('')
 
     const[nomeVeiculo, setNomeVeiculo] = useState('')
     const[modeloVeiculo, setModeloVeiculo] = useState('')
@@ -37,117 +41,238 @@ function HomeAdm() {
 
     const[servicos, setServicos] = useState([])
     const[produtos, setProdutos] = useState([])
-    const[quantidadeProduto, setQuantidadeProduto] = useState(1)
 
-
-
-/*
-    const checkCEP = (e) => {
-        if (!e.target.value) return; 
-        const cep = e.target.value.replace(/\D/g, '');
-        console.log(cep)
-        fetch(`https://viacep.com.br/ws/${cep}/json/`).then(res => res.json()).then(data => {
-            console.log(data);
-            setRua(data.logradouro);
-            setBairro(data.bairro);
-            setCidade(data.localidade);
-            setEstado(data.uf);
-        }).catch((err) => console.log(err));
-    }
- */
+    /*
+        const checkCEP = (e) => {
+            if (!e.target.value) return;
+            const cep = e.target.value.replace(/\D/g, '');
+            console.log(cep)
+            fetch(`https://viacep.com.br/ws/${cep}/json/`).then(res => res.json()).then(data => {
+                console.log(data);
+                setRua(data.logradouro);
+                setBairro(data.bairro);
+                setCidade(data.localidade);
+                setEstado(data.uf);
+            }).catch((err) => console.log(err));
+        }
+     */
 
     async function submitForm(){
 
 
-            const ufResponse = await api.post('unidade_federativa',{
+        const ufResponse = await api.post('unidade_federativa',{
 
-                nomeUnidadeFederativa: ufCliente
+            nomeUnidadeFederativa: ufCliente
 
-            })
+        })
 
-            const logradouroResponse = await api.post('logradouro',{
+        const logradouroResponse = await api.post('logradouro',{
 
-                nomeLogradouro: ruaCliente
+            nomeLogradouro: ruaCliente
 
-            })
+        })
 
-            const bairroResponse = await api.post('bairro',{
+        const bairroResponse = await api.post('bairro',{
 
-                nomeBairro: bairroCliente
+            nomeBairro: bairroCliente
 
-            })
+        })
 
-            const cidadeResponse = await api.post('cidade',{
+        const cidadeResponse = await api.post('cidade',{
 
-                nomeCidade: cidadeCliente,
-                unidadeFederativa: {
-                    idUnidadeFederativa: ufResponse.data.idUnidadeFederativa
-                }
+            nomeCidade: cidadeCliente,
+            unidadeFederativa: {
+                idUnidadeFederativa: ufResponse.data.idUnidadeFederativa
+            }
 
-            }) //.catch((error) => console.log( error.response.request ) );
+        })
 
-            const enderecoResponse = await api.post('endereco',{
+        const enderecoResponse = await api.post('endereco',{
 
-                cep: cepCliente,
-                cidade: {
-                    idCidade: cidadeResponse.data.idCidade
-                },
-                bairro: {
-                    idBairro: bairroResponse.data.idBairro
-                },
-                logradouro:{
-                    idLogradouro: logradouroResponse.data.idLogradouro
-                }
+            cep: cepCliente,
+            cidade: {
+                idCidade: cidadeResponse.data.idCidade
+            },
+            bairro: {
+                idBairro: bairroResponse.data.idBairro
+            },
+            logradouro:{
+                idLogradouro: logradouroResponse.data.idLogradouro
+            }
 
-            })
+        })
 
-            const clienteResponse = await api.post('cliente',{
+        const clienteResponse = await api.post('cliente',{
 
-                nomeCliente: nomeCliente,
-                cpfCliente: cpfCliente,
-                numCasaCliente: numeroCliente,
-                complementoCasaCliente: complementoCliente,
-                endereco: {
-                    idEndereco: enderecoResponse.data.idEndereco
-                }
+            nomeCliente: nomeCliente,
+            cpfCliente: cpfCliente,
+            numCasaCliente: numeroCliente,
+            complementoCasaCliente: complementoCliente,
+            endereco: {
+                idEndereco: enderecoResponse.data.idEndereco
+            }
 
-            })
+        })
 
-            const marcaResponse = await api.post('marca',{
+        async function cadastraTelefone(){
 
-                nomeMarca: marcaVeiculo
+            if(foneCliente){
 
-            })
+                const foneResponseOne = await api.post('telefone',{
+                    numeroTelefone: foneCliente,
+                    cliente:{
+                        idCliente: clienteResponse.data.idCliente
+                    }
+                })
 
-            const veiculoResponse = await api.post('veiculo', {
+            }
 
-                nomeVeiculo: nomeVeiculo,
-                kmVeiculo: kmVeiculo,
-                modelo: modeloVeiculo,
-                placa: placaVeiculo,
-                marca: {
-                    idMarca: marcaResponse.data.idMarca
-                }
+            if(foneClienteDois){
+
+                const foneResponseTwo = await api.post('telefone',{
+                    numeroTelefone: foneClienteDois,
+                    cliente:{
+                        idCliente: clienteResponse.data.idCliente
+                    }
+                })
+
+            }
+
+            if(foneClienteTres){
+
+                const foneResponseThree = await api.post('telefone',{
+                    numeroTelefone: foneClienteTres,
+                    cliente:{
+                        idCliente: clienteResponse.data.idCliente
+                    }
+                })
+
+            }
+
+        }
+
+        async function cadastraEmail(){
+
+            if(emailCliente){
+
+                const emailResponseOne = await api.post('email',{
+                    email: emailCliente,
+                    cliente:{
+                        idCliente: clienteResponse.data.idCliente
+                    }
+                })
+
+            }
+
+            if(emailClienteDois){
+
+                const emailResponseTwo = await api.post('email',{
+                    email: emailClienteDois,
+                    cliente:{
+                        idCliente: clienteResponse.data.idCliente
+                    }
+                })
+
+            }
+
+        }
+
+        await cadastraEmail()
+        await cadastraTelefone()
+
+        const marcaResponse = await api.post('marca',{
+
+            nomeMarca: marcaVeiculo
+
+        })
+
+        const veiculoResponse = await api.post('veiculo', {
+
+            nomeVeiculo: nomeVeiculo,
+            kmVeiculo: kmVeiculo,
+            modelo: modeloVeiculo,
+            placa: placaVeiculo,
+            marca: {
+                idMarca: marcaResponse.data.idMarca
+            }
 
 
-            })
+        })
 
-            const ordemResponse = await api.post('ordem_servico',{
+        const ordemResponse = await api.post('ordem_servico',{
+
+            dataOrdemServico: today,
+            cliente:{
+                idCliente : clienteResponse.data.idCliente
+            },
+            veiculo:{
+                idVeiculo: veiculoResponse.data.idVeiculo
+            },
+            estado:{
+                idEstado: 3
+            }
 
 
 
+        })
 
-            })
+        for(const produto of produtos){
+            if(produto.quantidade > 0){
+                await cadastraItemProduto(produto,ordemResponse.data.nroOrdemDeServico)
+            }
+        }
+
+        for(const servico of servicos){
+            if(servico.quantidade > 0){
+                await cadastraServico(servico,ordemResponse.data.nroOrdemDeServico)
+            }
+        }
 
         alert("Ordem de Serviço Cadastrada");
 
 
     }
 
+    async function cadastraItemProduto(item, nroOrdemDeServico){
+
+        const produtoResponse = await api.post('item_produto',{
+
+            quantidadeProduto: item.quantidade,
+            ordemDeServico:{
+                nroOrdemDeServico: nroOrdemDeServico
+            },
+            produto:{
+                codProduto: item.codProduto
+            }
+
+
+        })
+
+    }
+
+    async function cadastraServico(item, nroOrdemDeServico){
+
+        const servicoResponse = await api.post('servico',{
+
+            ordemDeServico:{
+                nroOrdemDeServico: nroOrdemDeServico
+            },
+            tipoServico:{
+                idTipoServico: item.idTipoServico
+            }
+
+
+        })
+
+        console.log(servicoResponse)
+    }
+
+
     useEffect(() => {
         async function getProdutos (){
             const produtosResponse = await api.get('produto');
             if(produtosResponse.data){
+                const produtos = produtosResponse.data.map((item) => { return({...item, quantidade: 0})})
                 setProdutos(produtosResponse.data)
                 console.log(produtosResponse.data)
             }
@@ -155,178 +280,165 @@ function HomeAdm() {
         getProdutos();
     },[])
 
+
+    useEffect(() => {
+        async function getServicos (){
+            const servicosResponse = await api.get('tipo_servico');
+            if(servicosResponse.data){
+                const servicos = servicosResponse.data.map((item) => { return({...item, quantidade: 0})})
+                setServicos(servicosResponse.data)
+                console.log(servicosResponse.data)
+            }
+        }
+        getServicos();
+    },[])
+
+
+
+
     return(
-        
+
 
         <H.GlobalContainer>
-                <H.Header>
-                    <H.LogoImage src={Logo}/>
-                    <H.ButtonHeader href="/adm">CADASTRAR OS</H.ButtonHeader>
-                    <H.ButtonHeader href="/adm/ordens">ORDENS DE SERVIÇO</H.ButtonHeader>
-                    <H.ButtonHeader href="/adm/cadastro" >CADASTRAR ITENS</H.ButtonHeader>
-                    <H.ButtonHeader href="/">WEBSITE</H.ButtonHeader>
-                </H.Header>
+            <H.Header>
+                <H.LogoImage src={Logo}/>
+                <H.ButtonHeader href="/adm">CADASTRAR OS</H.ButtonHeader>
+                <H.ButtonHeader href="/adm/ordens">ORDENS DE SERVIÇO</H.ButtonHeader>
+                <H.ButtonHeader href="/adm/cadastro" >CADASTRAR ITENS</H.ButtonHeader>
+                <H.ButtonHeader href="/">WEBSITE</H.ButtonHeader>
+            </H.Header>
             <H.Title>CADASTRAR ORDEM DE SERVIÇO</H.Title>
 
-                <H.FormContainer>
+            <H.FormContainer>
 
+                <H.RowContainer>
+                    <H.TextInput>Data OS:</H.TextInput>
+                    <H.InputMaior type="date" value={today}/>
+                    <H.Checkbox type="checkbox"/>
+                    <H.TextInput>Já Aprovada?</H.TextInput>
+                </H.RowContainer>
+
+                <H.CustomerContainer>
+                    <H.TitleContainer>Dados do Cliente:</H.TitleContainer>
                     <H.RowContainer>
-                        <H.TextInput>Data OS:</H.TextInput>
-                        <H.InputMaior type="date" value={today}/>
-                        <H.Checkbox type="checkbox"/>
-                        <H.TextInput>Já Aprovada?</H.TextInput>
+                        <H.TextInput>Nome Cliente:</H.TextInput>
+                        <H.InputMaior type="text" onChange = {(event) => {setNomeCliente(event.target.value)}}/>
+                        <H.TextInput>CPF:</H.TextInput>
+                        <H.InputMaior onChange = {(event) => {setCpfCliente(event.target.value)}}/>
                     </H.RowContainer>
+                    <H.RowContainer>
+                        <H.TextInput>CEP:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setCepCliente(event.target.value)}}/>
+                        <H.TextInput>Rua:</H.TextInput>
+                        <H.InputMaior onChange = {(event) => {setRuaCliente(event.target.value)}}/>
+                        <H.TextInput>Nro:</H.TextInput>
+                        <H.InputMenor onChange = {(event) => {setNumeroCliente(event.target.value)}}/>
+                        <H.TextInput>Bairro:</H.TextInput>
+                        <H.InputMaior onChange = {(event) => {setBairroCliente(event.target.value)}}/>
+                    </H.RowContainer>
+                    <H.RowContainer>
+                        <H.TextInput>Cidade:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setCidadeCliente(event.target.value)}}/>
+                        <H.TextInput>UF:</H.TextInput>
+                        <H.InputMenor onChange = {(event) => {setUfCliente(event.target.value)}}/>
+                        <H.TextInput>Complemento:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setComplementoCliente(event.target.value)}}/>
+                    </H.RowContainer>
+                    <H.RowContainer>
+                        <H.TextInput>Fone(s):</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setFoneCliente(event.target.value)}}/>
+                        <H.TextInput>,</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setFoneClienteDois(event.target.value)}}/>
+                        <H.TextInput >,</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setFoneClienteTres(event.target.value)}}/>
+                    </H.RowContainer>
+                    <H.RowContainer>
+                        <H.TextInput>Email(s):</H.TextInput>
+                        <H.InputMaior onChange = {(event) => {setEmailCliente(event.target.value)}} />
+                        <H.TextInput>,</H.TextInput>
+                        <H.InputMaior onChange = {(event) => {setEmailClienteDois(event.target.value)}}/>
+                    </H.RowContainer>
+                </H.CustomerContainer>
 
-                    <H.CustomerContainer>
-                        <H.TitleContainer>Dados do Cliente:</H.TitleContainer>
-                        <H.RowContainer>
-                            <H.TextInput>Nome Cliente:</H.TextInput>
-                            <H.InputMaior type="text" onChange = {(event) => {setNomeCliente(event.target.value)}}/>
-                            <H.TextInput>CPF:</H.TextInput>
-                            <H.InputMaior type="number" onChange = {(event) => {setCpfCliente(event.target.value)}}/>
-                        </H.RowContainer>
-                        <H.RowContainer>
-                            <H.TextInput>CEP:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setCepCliente(event.target.value)}}/>
-                            <H.TextInput>Rua:</H.TextInput>
-                            <H.InputMaior onChange = {(event) => {setRuaCliente(event.target.value)}}/>
-                            <H.TextInput>Nro:</H.TextInput>
-                            <H.InputMenor onChange = {(event) => {setNumeroCliente(event.target.value)}}/>
-                            <H.TextInput>Bairro:</H.TextInput>
-                            <H.InputMaior onChange = {(event) => {setBairroCliente(event.target.value)}}/>
-                        </H.RowContainer>
-                        <H.RowContainer>
-                            <H.TextInput>Cidade:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setCidadeCliente(event.target.value)}}/>
-                            <H.TextInput>UF:</H.TextInput>
-                            <H.InputMenor onChange = {(event) => {setUfCliente(event.target.value)}}/>
-                            <H.TextInput>Complemento:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setComplementoCliente(event.target.value)}}/>
-                        </H.RowContainer>
-                        <H.RowContainer>
-                            <H.TextInput>Fone(s):</H.TextInput>
-                            <H.InputMedio/>
-                            <H.TextInput>,</H.TextInput>
-                            <H.InputMedio/>
-                            <H.TextInput>,</H.TextInput>
-                            <H.InputMedio/>
-                        </H.RowContainer>
-                        <H.RowContainer>
-                            <H.TextInput>Email(s):</H.TextInput>
-                            <H.InputMaior/>
-                            <H.TextInput>,</H.TextInput>
-                            <H.InputMaior/>
-                        </H.RowContainer>
-                    </H.CustomerContainer>
+                <H.CarContainer>
+                    <H.TitleContainer>Dados do Veículo:</H.TitleContainer>
+                    <H.RowContainer>
+                        <H.TextInput>Nome Veículo:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setNomeVeiculo(event.target.value)}}/>
+                        <H.TextInput>Modelo:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setModeloVeiculo(event.target.value)}}/>
+                        <H.TextInput>Marca:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setMarcaVeiculo(event.target.value)}}/>
+                        <H.TextInput>Placa:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setPlacaVeiculo(event.target.value)}}/>
+                        <H.TextInput>Km do veículo:</H.TextInput>
+                        <H.InputMedio onChange = {(event) => {setKmVeiculo(event.target.value)}}/>
+                    </H.RowContainer>
+                </H.CarContainer>
 
-                    <H.CarContainer>
-                        <H.TitleContainer>Dados do Veículo:</H.TitleContainer>
-                        <H.RowContainer>
-                            <H.TextInput>Nome Veículo:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setNomeVeiculo(event.target.value)}}/>
-                            <H.TextInput>Modelo:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setModeloVeiculo(event.target.value)}}/>
-                            <H.TextInput>Marca:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setMarcaVeiculo(event.target.value)}}/>
-                            <H.TextInput>Placa:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setPlacaVeiculo(event.target.value)}}/>
-                            <H.TextInput>Km do veículo:</H.TextInput>
-                            <H.InputMedio onChange = {(event) => {setKmVeiculo(event.target.value)}}/>
-                        </H.RowContainer>
-                    </H.CarContainer>
+                <H.ServicesContainer>
+                    <H.RowContainer>
+                        <H.TitleContainer>Produtos Utilizados</H.TitleContainer>
+                    </H.RowContainer>
+                    <H.RowContainer>
+                        <H.TextInputServices>Cod.Produto</H.TextInputServices>
+                        <H.TextInputServices>Nome do Produto</H.TextInputServices>
+                        <H.TextInputServices>Valor do Produto</H.TextInputServices>
+                        <H.TextInputServices>Quantidade</H.TextInputServices>
+                    </H.RowContainer>
+                    { produtos.map( (item) => {
+                        return(
+                            <H.RowContainer key={item}>
+                                <H.InputMedio value={item.codProduto}/>
+                                <H.InputMaior value={item.nomeProduto}/>
+                                <H.InputMedio defaultValue={0} value={item.valorItem * item.quantidade}/>
+                                <H.InputMenor type='number' defaultValue={0} onChange = {(event) => {
+                                    const produtosAlterados = produtos.map((prod)=>{
+                                        if(prod.codProduto===item.codProduto){
+                                            return {...prod, quantidade: event.target.value};
+                                        }else{
+                                            return prod;
+                                        }
+                                    });
+                                    setProdutos(produtosAlterados)}}/>
+                            </H.RowContainer>
+                        )
+                    })
+                    }
+                </H.ServicesContainer>
 
-                    <H.ServicesContainer>
-                        <H.RowContainer>
+                <H.ServicesContainer>
+                    <H.RowContainer>
                         <H.TitleContainer>Serviços Realizados</H.TitleContainer>
-                            <H.AddButton type="button" onClick={() => {
-                                setServiceCount([...serviceCount, serviceCount.at(-1)+1])
-                            }}><img src={Add} alt="Adicionar Serviço" width="25px" height="25px"/></H.AddButton>
-                        </H.RowContainer>
-                        <H.RowContainer>
-                            <H.TextInputServices>Cod.Serviço</H.TextInputServices>
-                            <H.TextInputServices>Tipo Serviço</H.TextInputServices>
-                            <H.TextInputServices>Valor Mão de Obra</H.TextInputServices>
-                        </H.RowContainer>
-                        { serviceCount.map( (item) => {
-                            return(
-                                <H.RowContainer key={item}>
-                                    <H.InputMedio/>
-                                    <H.InputSelect>
-                                        <option>Troca de Bateria</option>
-                                        <option>Lavagem Especial</option>
-                                    </H.InputSelect>
-                                    <H.InputMedio/>
-                                    <H.TrashButton
-                                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <line x1="4" y1="7" x2="20" y2="7" />
-                                        <line x1="10" y1="11" x2="10" y2="17" />
-                                        <line x1="14" y1="11" x2="14" y2="17" />
-                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                    </H.TrashButton>
-                                </H.RowContainer>
-                            )
-                            })
-                        }
-                    </H.ServicesContainer>
+                    </H.RowContainer>
+                    <H.RowContainer>
+                        <H.TextInputServices>Cod.Serviço</H.TextInputServices>
+                        <H.TextInputServices>Tipo Serviço</H.TextInputServices>
+                        <H.TextInputServices>Valor Mão de Obra</H.TextInputServices>
+                        <H.TextInputServices>Incluído?</H.TextInputServices>
+                    </H.RowContainer>
+                    { servicos.map( (item) => {
+                        return(
+                            <H.RowContainer key={item}>
+                                <H.InputMedio value={item.idTipoServico}/>
+                                <H.InputMaior value={item.nomeTipoServico}/>
+                                <H.InputMedio value={item.valorMaoDeObra}/>
+                                <H.InputMenor type='number' onChange = {(event) => {
+                                    const servicosAlterados = servicos.map((serv)=>{
+                                        if(serv.idTipoServico===item.idTipoServico){
+                                            return {...serv, quantidade: event.target.value};
+                                        }else{
+                                            return serv;
+                                        }
+                                    });
+                                    setServicos(servicosAlterados)}}/>
+                            </H.RowContainer>
+                        )
+                    })
+                    }
+                </H.ServicesContainer>
 
-                    <H.ServicesContainer>
-                        <H.RowContainer>
-                            <H.TitleContainer>Produtos Utilizados</H.TitleContainer>
-                            <H.AddButton type="button" onClick={() => {
-                                setProdutCount([...produtCount, produtCount.at(-1)+1])
-                            }}><img src={Add} alt="Adicionar Serviço" width="25px" height="25px"/></H.AddButton>
-                        </H.RowContainer>
-                        <H.RowContainer>
-                            <H.TextInputServices>Cod.Produto</H.TextInputServices>
-                            <H.TextInputServices>Nome Produto</H.TextInputServices>
-                            <H.TextInputServices>Qtde</H.TextInputServices>
-                            <H.TextInputServices>Valor Item</H.TextInputServices>
-                            <H.TextInputServices>Total</H.TextInputServices>
-                        </H.RowContainer>
-                        { produtCount.map((item) => {
-                            return(
-                                <H.RowContainer key={item}>
-                                    { produtos.map((item) => {
-                                        return (
-                                            <H.InputMenor value={item.codProduto}/>
-                                        )
-                                    })}
-                                    <H.InputSelect>
-                                        { produtos.map((item) => {
-                                            return (
-                                                <option>{item.nomeProduto}</option>
-                                            )
-                                        })}
-                                    </H.InputSelect>
-                                    <H.InputMenor type='number' onChange = {(event) => {setQuantidadeProduto(event.target.value)}}/>
-                                        { produtos.map((item) => {
-                                            return (
-                                                <H.InputMenor value={item.valorItem}/>
-                                            )
-                                        })}
-                                    { produtos.map((item) => {
-                                        return (
-                                            <H.InputMenor value={item.valorItem * quantidadeProduto}/>
-                                        )
-                                    })}
-                                    <H.TrashButton
-                                        xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <line x1="4" y1="7" x2="20" y2="7" />
-                                        <line x1="10" y1="11" x2="10" y2="17" />
-                                        <line x1="14" y1="11" x2="14" y2="17" />
-                                        <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                        <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                    </H.TrashButton>
-                                </H.RowContainer>
-                            )
-                            })
-                        }
-                    </H.ServicesContainer>
-
-                </H.FormContainer>
+            </H.FormContainer>
 
 
             <H.ButtonCadastro onClick={() => submitForm() }>Cadastrar</H.ButtonCadastro>
@@ -337,7 +449,7 @@ function HomeAdm() {
 
 
         </H.GlobalContainer>
-        
+
 
     )
 }

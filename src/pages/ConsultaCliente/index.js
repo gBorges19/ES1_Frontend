@@ -1,79 +1,151 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import * as C from "./styles";
 import Logo from '../../assets/L.png';
+import api from "../../api";
+import * as H from "../HomeOficina/styles";
 
 function ConsultaCliente() {
+
+    const[ordemPendentes, setOrdemPendentes] = useState([])
+    const[ordemAtivas, setOrdemAtivas] = useState([])
+    const[cpfCliente, setCpfCliente] = useState('')
+
+        async function getOrdens(){
+
+            async function getOrdensPendentes (){
+                const ordemPendentesResponse = await api.get(`ordem_servico/por_cpf_e_estado/${cpfCliente}/Aguardando`);
+                if(ordemPendentesResponse.data){
+                    setOrdemPendentes(ordemPendentesResponse.data)
+                    console.log(ordemPendentesResponse.data)
+                }
+
+            }
+
+            async function getOrdensAtivas (){
+                const ordemAtivasResponse = await api.get(`ordem_servico/por_cpf_e_estado/${cpfCliente}/Aprovado`);
+                if(ordemAtivasResponse.data){
+                    setOrdemAtivas(ordemAtivasResponse.data)
+                    console.log(ordemAtivasResponse.data)
+                }
+
+            }
+
+            await getOrdensPendentes();
+            await getOrdensAtivas();
+
+        }
+
+        async function aprovarOrdem(nroOrdemDeServico){
+            console.log(nroOrdemDeServico)
+            const aprovarResponse = await api.post(`ordem_servico/${nroOrdemDeServico}/aprovar`,{
+                id:  nroOrdemDeServico
+            })
+        }
+
+    async function recusarOrdem(nroOrdemDeServico){
+        console.log(nroOrdemDeServico)
+        const recusarResponse = await api.post(`ordem_servico/${nroOrdemDeServico}/cancelar`,{
+            id:  nroOrdemDeServico
+        })
+    }
+
 
     return (
 
         <C.GlobalContainer>
             <C.Header>
-                <C.LogoImage src={Logo}></C.LogoImage>
+                <C.LogoImage src={Logo}/>
                 <C.ButtonHeader href="/">VOLTAR</C.ButtonHeader>
-                <C.TextoAlto>Gustavo Borges</C.TextoAlto>
+                <C.TextoAlto>Consulta de pedidos</C.TextoAlto>
             </C.Header>
-
+            <H.ConsultaCard>
+                <H.TitleConsulta>INSIRA SEU CPF:</H.TitleConsulta>
+                <H.InputConsulta onChange = {(event) => {setCpfCliente(event.target.value)}}/>
+                <H.ButtonConsulta onClick = {getOrdens}>CONSULTAR</H.ButtonConsulta>
+            </H.ConsultaCard>
             <C.Title>ORÇAMENTOS</C.Title>
-            <C.ConsultaOrçamentos>
-                <C.RowContainer>
-                    <C.RowContainer>
-                        <C.TextoAlto>Veículo:</C.TextoAlto>
-                        <C.TextoBaixo>Nissan 2017</C.TextoBaixo>
-                    </C.RowContainer>
-                    <C.RowContainer>
-                        <C.TextoAlto>Valor Total:</C.TextoAlto>
-                        <C.TextoBaixo>R$ 700,00</C.TextoBaixo>
-                    </C.RowContainer>
-                    <C.RowContainer>
-                        <C.ButtonOk>Aprovar</C.ButtonOk>
-                        <C.ButtonNo>Negar</C.ButtonNo>
-                    </C.RowContainer>
-                </C.RowContainer>
 
-                <C.RowContainer>
-                    <C.RowContainer>
-                        <C.TextoAlto>Serviços:</C.TextoAlto>
-                        <C.TextoBaixo>Troca de Bateria,</C.TextoBaixo>
-                        <C.TextoBaixo>Limpeza,</C.TextoBaixo>
-                    </C.RowContainer>
-                    <C.RowContainer>
-                        <C.TextoAlto>Produtos:</C.TextoAlto>
-                        <C.TextoBaixo>Bateria XYZ,</C.TextoBaixo>
-                        <C.TextoBaixo>Grand Pix Brilho,</C.TextoBaixo>
-                    </C.RowContainer>
-                </C.RowContainer>
-            </C.ConsultaOrçamentos>
+            {ordemPendentes.map((item) => {
+
+                return(
+
+                        <C.ConsultaOrçamentos>
+                            <C.RowContainer>
+                                <C.RowContainer>
+                                    <C.TextoAlto>Veículo:</C.TextoAlto>
+                                    <C.TextoBaixo>{item.veiculo.nomeVeiculo}</C.TextoBaixo>
+                                </C.RowContainer>
+                                <C.RowContainer>
+                                    <C.TextoAlto>Valor Total:</C.TextoAlto>
+                                    <C.TextoBaixo>R$ 700,00</C.TextoBaixo>
+                                </C.RowContainer>
+                                <C.RowContainer>
+                                    <C.ButtonOk onClick={ () => {
+                                        aprovarOrdem(item.nroOrdemDeServico)
+                                    }}>Aprovar</C.ButtonOk>
+                                    <C.ButtonNo onClick={ () => {
+                                        recusarOrdem(item.nroOrdemDeServico)
+                                    }}>Negar</C.ButtonNo>
+                                </C.RowContainer>
+                            </C.RowContainer>
+
+                            <C.RowContainer>
+                                <C.RowContainer>
+                                    <C.TextoAlto>Serviços:</C.TextoAlto>
+                                    <C.TextoBaixo>Troca de Bateria,</C.TextoBaixo>
+                                    <C.TextoBaixo>Limpeza,</C.TextoBaixo>
+                                </C.RowContainer>
+                                <C.RowContainer>
+                                    <C.TextoAlto>Produtos:</C.TextoAlto>
+                                    <C.TextoBaixo>{item.produtoList.data}</C.TextoBaixo>
+                                    <C.TextoBaixo>Grand Pix Brilho,</C.TextoBaixo>
+                                </C.RowContainer>
+                            </C.RowContainer>
+                        </C.ConsultaOrçamentos>
+
+                )
+
+            })}
 
             <C.Title>PEDIDOS</C.Title>
-            <C.ContainerPedido>
-                <C.RowContainer>
-                    <C.TextoAlto>Pedido: </C.TextoAlto>
-                    <C.TextoBaixo>00000001</C.TextoBaixo>
-                </C.RowContainer>
-                <C.RowContainer>
-                    <C.TextoAlto>Status: </C.TextoAlto>
-                    <C.StatusPendente>PENDENTE</C.StatusPendente>
-                </C.RowContainer>
-                <C.RowContainer>
-                    <C.TextoAlto>Cliente:</C.TextoAlto>
-                    <C.TextoBaixo>Gustavo Juliano Borges</C.TextoBaixo>
-                </C.RowContainer>
-                <C.RowContainer>
-                    <C.TextoAlto>Veículo:</C.TextoAlto>
-                    <C.TextoBaixo>Celta 2001</C.TextoBaixo>
-                </C.RowContainer>
-                <C.RowContainer>
-                    <C.TextoAlto>Data do Pedido:</C.TextoAlto>
-                    <C.TextoBaixo> 29/03/2022</C.TextoBaixo>
-                </C.RowContainer>
-                <C.RowContainer>
-                    <C.TextoAlto>Valor Pago:</C.TextoAlto>
-                    <C.TextoBaixo> R$ 749,00</C.TextoBaixo>
-                </C.RowContainer>
-            </C.ContainerPedido>
+            {ordemAtivas.map((item) => {
+
+                const date = new Date(item.dataOrdemServico);
+
+                return(
+                        <C.ContainerPedido>
+                            <C.RowContainer>
+                                <C.TextoAlto>Pedido: </C.TextoAlto>
+                                <C.TextoBaixo>{item.nroOrdemDeServico}</C.TextoBaixo>
+                            </C.RowContainer>
+                            <C.RowContainer>
+                                <C.TextoAlto>Status: </C.TextoAlto>
+                                <C.StatusPendente>PENDENTE</C.StatusPendente>
+                            </C.RowContainer>
+                            <C.RowContainer>
+                                <C.TextoAlto>Cliente:</C.TextoAlto>
+                                <C.TextoBaixo>{item.cliente.nomeCliente}</C.TextoBaixo>
+                            </C.RowContainer>
+                            <C.RowContainer>
+                                <C.TextoAlto>Veículo:</C.TextoAlto>
+                                <C.TextoBaixo>{item.veiculo.nomeVeiculo}</C.TextoBaixo>
+                            </C.RowContainer>
+                            <C.RowContainer>
+                                <C.TextoAlto>Data do Pedido:</C.TextoAlto>
+                                <C.TextoBaixo>{date.getDate().toString() +  '/' + date.getMonth().toString() +  '/' + date.getFullYear().toString()}</C.TextoBaixo>
+                            </C.RowContainer>
+                            <C.RowContainer>
+                                <C.TextoAlto>Valor Pago:</C.TextoAlto>
+                                <C.TextoBaixo> R$ 749,00</C.TextoBaixo>
+                            </C.RowContainer>
+                        </C.ContainerPedido>
+                )
+            })}
+
+
 
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1250 240">
-                <path fill="#22BABB" fill-opacity="1" d="M0,64L24,85.3C48,107,96,149,144,144C192,139,240,85,288,80C336,75,384,117,432,144C480,171,528,181,576,170.7C624,160,672,128,720,128C768,128,816,160,864,165.3C912,171,960,149,1008,154.7C1056,160,1104,192,1152,181.3C1200,171,1248,117,1296,80C1344,43,1392,21,1416,10.7L1440,0L1440,320L1416,320C1392,320,1344,320,1296,320C1248,320,1200,320,1152,320C1104,320,1056,320,1008,320C960,320,912,320,864,320C816,320,768,320,720,320C672,320,624,320,576,320C528,320,480,320,432,320C384,320,336,320,288,320C240,320,192,320,144,320C96,320,48,320,24,320L0,320Z"></path>
+                <path fill="#22BABB" fillOpacity="1" d="M0,64L24,85.3C48,107,96,149,144,144C192,139,240,85,288,80C336,75,384,117,432,144C480,171,528,181,576,170.7C624,160,672,128,720,128C768,128,816,160,864,165.3C912,171,960,149,1008,154.7C1056,160,1104,192,1152,181.3C1200,171,1248,117,1296,80C1344,43,1392,21,1416,10.7L1440,0L1440,320L1416,320C1392,320,1344,320,1296,320C1248,320,1200,320,1152,320C1104,320,1056,320,1008,320C960,320,912,320,864,320C816,320,768,320,720,320C672,320,624,320,576,320C528,320,480,320,432,320C384,320,336,320,288,320C240,320,192,320,144,320C96,320,48,320,24,320L0,320Z"/>
             </svg>
             <C.SocialContainer>
                 <C.SocialMediaCard>

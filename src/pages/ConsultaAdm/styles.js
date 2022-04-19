@@ -124,7 +124,7 @@ export const OrdemServiçoHeader = styled.div`
 
 export const OrdemServiço = styled.div`
 
-    display: none;
+    display: flex;
     flex-direction: column;
     background: rgba(33, 37, 41, 0.50);
     width: 80%;

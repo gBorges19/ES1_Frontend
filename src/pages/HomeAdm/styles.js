@@ -285,3 +285,12 @@ export const Checkbox = styled.input`
     margin-left: 50px;
 
 `
+
+export const ColumnContainer = styled.div`
+
+
+    display: flex;
+    flex-direction: column;
+
+
+`
